@@ -13,5 +13,5 @@ def polynomial(p):
 
 def radial_basis_function(sigma):
     def radial(x, y):
-        return math.exp(-np.abs(x-y)**2 / (2 * sigma**2))
+        return math.exp(-np.linalg.norm(x-y)**2 / (2 * sigma**2))
     return radial
