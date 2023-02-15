@@ -1,6 +1,8 @@
 import numpy as np
 import random
 
+random.seed(100)
+
 
 def generate(N, a1=[1.5, 0.5], a2=[-1.5, 0.5], b=[0, -0.5], deviation=0.2):
     classA = np.concatenate((np.random.randn(
