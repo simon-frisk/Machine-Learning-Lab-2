@@ -12,8 +12,6 @@ np.random.seed(100)
 # Get data
 N = 40
 inputs, targets, classA, classB = test_data.generate(N)
-#inputs = np.array([[1, 0], [-1, 0]])
-#targets = np.array([1, -1])
 
 # Get kernel
 kernel = kernel_collection.polynomial(4)
@@ -23,16 +21,16 @@ C = 10
 bounds = [(0, C) for b in range(N)]
 
 # Get P matrix
-P = np.zeros((N, N))
-for i in range(N):
-    for j in range(N):
-        P[i, j] = targets[i]*targets[j]*kernel(inputs[i, :], inputs[j, :])
+
+
+def get_P(N, targets, inputs, kernel):
+    P = np.zeros((N, N))
+    for i in range(N):
+        for j in range(N):
+            P[i, j] = targets[i]*targets[j]*kernel(inputs[i, :], inputs[j, :])
+    return P
 
 # Define helper functions
-
-
-def objective(a):
-    return 0.5 * np.dot(np.transpose(a), np.dot(P, a)) - np.sum(a)
 
 
 def zerofun(a):
@@ -71,12 +69,27 @@ def indicator(a, s):
     return sum - compute_bias(a)
 
 
+def master(classA, classB, inputs, targets, N, kernel, C):
+    P = get_P(N, targets, inputs, kernel)
+    bounds = [(0, C) for b in range(N)]
+
+    def objective(a):
+        return 0.5 * np.dot(np.transpose(a), np.dot(P, a)) - np.sum(a)
+
+    results = minimize(objective, np.random.randn(N), bounds=bounds,
+                       constraints={'type': 'eq', 'fun': zerofun})
+
+    alphas = results['x']
+
+    plot.plot(alphas, indicator, classA, classB)
+
+
 # Optimize
-results = minimize(objective, np.random.randn(N), bounds=bounds,
-                   constraints={'type': 'eq', 'fun': zerofun})
-alphas = results['x']
+# results = minimize(objective, np.random.randn(N), bounds=bounds,
+#                   constraints={'type': 'eq', 'fun': zerofun})
+#alphas = results['x']
 
 # Extract support vectors
 
 
-plot.plot(alphas, indicator, classA, classB)
+master(classA, classB, inputs, targets, N, kernel, C)
