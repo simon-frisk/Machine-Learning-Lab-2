@@ -16,10 +16,10 @@ inputs, targets, classA, classB = test_data.generate(N)
 #targets = np.array([1, -1])
 
 # Get kernel
-kernel = kernel_collection.polynomial(3)
+kernel = kernel_collection.polynomial(4)
 
 # Get constraint
-C = 100
+C = 10
 bounds = [(0, C) for b in range(N)]
 
 # Get P matrix
@@ -55,7 +55,6 @@ def compute_bias(a):
     non_zeros = get_non_zeros(a)
 
     support_vector = non_zeros[0]['x']
-    #support_vector_indicator = indicator(a, support_vector)
 
     sum = 0
 
